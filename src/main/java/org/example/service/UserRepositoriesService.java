@@ -15,6 +15,10 @@ import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.utils.UtilityClass.BRANCHES_PATH;
+import static org.example.utils.UtilityClass.EXCEPTION_MESSAGE;
+import static org.example.utils.UtilityClass.REPOSITORIES_PATH;
+
 @Service
 @RequiredArgsConstructor
 public class UserRepositoriesService {
@@ -42,10 +46,10 @@ public class UserRepositoriesService {
 
     private List<RepositoryDto> retrieveNotForkedRepositories(String username){
         return restClient.get()
-                .uri("https://api.github.com/users/{username}/repos", username)
+                .uri(REPOSITORIES_PATH, username)
                 .retrieve()
                 .onStatus(HttpStatus.NOT_FOUND::equals, (request, response) -> {
-                    throw new UserNotFoundException("GitHub user '" + username + "' not found");
+                    throw new UserNotFoundException(String.format(EXCEPTION_MESSAGE, username));
                 })
                 .body(new ParameterizedTypeReference<List<RepositoryDto>>() {})
                 .stream()
@@ -55,10 +59,10 @@ public class UserRepositoriesService {
 
     private List<GithubBranchDto> retrieveBranchesOfOneRepository(String username, RepositoryDto repositoryDto){
         return restClient.get()
-                .uri("https://api.github.com//repos/{username}/{repository}/branches", username, repositoryDto.getName())
+                .uri(BRANCHES_PATH, username, repositoryDto.getName())
                 .retrieve()
                 .onStatus(HttpStatus.NOT_FOUND::equals, (request, response) -> {
-                    throw new UserNotFoundException("GitHub user '" + username + "' not found");
+                    throw new UserNotFoundException(String.format(EXCEPTION_MESSAGE, username));
                 })
                 .body(new ParameterizedTypeReference<List<BranchDto>>() {})
                 .stream()
