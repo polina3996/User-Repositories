@@ -49,5 +49,17 @@ Returns a list of repositories with their names, owner login, branches and last 
     ]
   }
 ]
+```
 
-## 📥 API Endpoint
+For non-existing user or if username is absent:
+
+```json
+{
+    "status": 404,
+    "message": "GitHub user not found"
+}
+```
+
+## Tests
+
+**mvn verify** or **mvn failsafe:integration-test failsafe:verify**
